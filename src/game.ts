@@ -335,6 +335,7 @@ export class Game {
     if (!this.bonusGiven && this.score >= BONUS_LIFE) {
       this.bonusGiven = true;
       this.lives++;
+      w.popup(`${BONUS_LIFE} POINTS - 1UP`, w.player.x, w.player.y, '#f878f8');
       sfx.oneUp();
     }
     this.stepMusic(w);
