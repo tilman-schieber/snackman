@@ -330,6 +330,8 @@ export class Game {
     w.gained = 0;
     this.ghosts += w.ghostsEaten;
     w.ghostsEaten = 0;
+    this.lives += w.livesWon;
+    w.livesWon = 0;
     if (!this.bonusGiven && this.score >= BONUS_LIFE) {
       this.bonusGiven = true;
       this.lives++;

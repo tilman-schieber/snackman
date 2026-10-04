@@ -18,7 +18,7 @@ const SNACKMAN = '#f8d838';
 const SCARED = '#2038ec';
 const ICE = '#a8e4fc';
 const DOT_COLOR = '#fcd8a8';
-const POWER_COLORS: Record<SnackKind, string> = { burger: '#3858fc', icecream: ICE, coffee: '#d88028' };
+const POWER_COLORS: Record<SnackKind, string> = { burger: '#3858fc', icecream: ICE, coffee: '#d88028', cake: '#f878f8' };
 
 // ---------- sprites ----------
 
@@ -39,6 +39,10 @@ const SPRITES: Record<string, string[]> = {
   burger: ['..bbbb..', '.bsbbsb.', 'bbbbbbbb', 'gggggggg', 'pppppppp', 'yyyyyyyy', 'BBBBBBBB', '.BBBBBB.'],
   icecream: ['...r....', '..kkkk..', '.kwkkkk.', '.kkkkkk.', 'bbbbbbbb', '.bBbBb..', '..bBb...', '...b....'],
   coffee: ['..e.e...', '...e.e..', 'wwwwww..', 'wppppwww', 'wwwwww.w', 'wwwwwwww', 'wwwwww..', '.wwww...'],
+  egg: ['........', '...ww...', '..wwww..', '.wwwwww.', '.wewwww.', '.wwwwww.', '..wwww..', '...ww...'],
+  flour: ['..eeee..', '..e..e..', '.wwwwww.', '.wwwwww.', '.wcccww.', '.wcccww.', '.wwwwww.', '.wwwwww.'],
+  candle: ['...y....', '..ywy...', '...y....', '...r....', '...r....', '...r....', '...r....', '..rrr...'],
+  cake: ['...y....', '...w....', '.kkkkkk.', 'kkkkkkkk', 'pppppppp', 'wwwwwwww', 'pppppppp', '.pppppp.'],
 };
 const DIM: Record<string, string> = Object.fromEntries(Object.entries(PALETTE).map(([k, c]) => [k, mix(c, '#000000', 0.72)]));
 

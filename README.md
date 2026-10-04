@@ -24,6 +24,7 @@ Eat every dot, keep away from the four ghosts. In ARCADE there are no power pell
 | Burger | Bun, patty, cheese | Ghosts turn blue and can be eaten: 200, 400, 800, 1600 |
 | Ice cream | Cone, scoop, cherry | Ghosts freeze and can't hurt you |
 | Coffee | Beans, milk, cup | You are fast and dots count double; in BLACKOUT you see further |
+| Birthday cake | Egg, flour, candle | Rare, and eaten on the spot: an extra life |
 
 A finished snack waits in your pocket until you press Space. The next recipe starts as soon as the snack is eaten, and snacks wear off sooner on later levels.
 

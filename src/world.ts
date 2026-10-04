@@ -34,11 +34,13 @@ export interface Ghost extends Actor {
   wait: number;
 }
 
-export type SnackKind = 'burger' | 'icecream' | 'coffee';
+export type SnackKind = 'burger' | 'icecream' | 'coffee' | 'cake';
 export const RECIPES: Record<SnackKind, { name: string; parts: string[] }> = {
   burger: { name: 'BURGER', parts: ['bun', 'patty', 'cheese'] },
   icecream: { name: 'ICE CREAM', parts: ['cone', 'scoop', 'cherry'] },
   coffee: { name: 'COFFEE', parts: ['beans', 'milk', 'cup'] },
+  /** Rare, and eaten on the spot: an extra life. */
+  cake: { name: 'BIRTHDAY CAKE', parts: ['egg', 'flour', 'candle'] },
 };
 
 export interface Particle {
@@ -113,6 +115,8 @@ export class World {
   private ingredientDelay = 60;
   /** A finished snack, eaten with SPACE. */
   pocket: SnackKind | null = null;
+  /** Lives won since the game last collected them. */
+  livesWon = 0;
   /** Bonus fruit (CLASSIC): frames left, 0 when there is none. */
   fruit = 0;
 
@@ -438,14 +442,20 @@ export class World {
       return;
     }
     this.score(400);
-    this.pocket = this.recipe;
-    this.popup(`${r.name}!`, x, y, '#f8d838');
-    sfx.snackReady();
+    if (this.recipe === 'cake') {
+      this.livesWon++;
+      this.popup(`${r.name}! 1UP`, x, y, '#f878f8');
+      sfx.oneUp();
+    } else {
+      this.pocket = this.recipe;
+      this.popup(`${r.name}!`, x, y, '#f8d838');
+      sfx.snackReady();
+    }
     this.got.clear();
     this.ingredients = [];
     this.ingredientDelay = 30;
     const roll = this.opt.rng();
-    this.recipe = roll < 0.5 ? 'burger' : roll < 0.75 ? 'icecream' : 'coffee';
+    this.recipe = roll < 0.45 ? 'burger' : roll < 0.7 ? 'icecream' : roll < 0.9 ? 'coffee' : 'cake';
   }
 
   private useSnack() {
