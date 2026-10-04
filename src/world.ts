@@ -109,7 +109,7 @@ export class World {
   recipe: SnackKind = 'burger';
   step = 0;
   ingredient: { cell: number; id: string } | null = null;
-  private ingredientDelay = 150;
+  private ingredientDelay = 60;
   /** A finished snack, eaten with SPACE. */
   pocket: SnackKind | null = null;
   /** Bonus fruit (CLASSIC): frames left, 0 when there is none. */
@@ -403,18 +403,18 @@ export class World {
   // ---------- snacks ----------
 
   private stepRecipe() {
-    if (!this.opt.mode.recipes || this.ingredient || this.pocket || this.power) return;
+    if (!this.opt.mode.recipes || this.ingredient || this.pocket) return;
     if (--this.ingredientDelay > 0) return;
-    // Somewhere a good walk away from Snackman.
+    // A short walk away from Snackman: not under his nose, not across the maze.
     const dist = this.distances([this.tileOf(this.pac)]);
-    const far: number[] = [];
+    const near: number[] = [];
     const any: number[] = [];
     for (let c = 0; c < dist.length; c++) {
       if (dist[c] < 4 || cx(c) === 0 || cx(c) === COLS - 1) continue;
       any.push(c);
-      if (dist[c] >= 12) far.push(c);
+      if (dist[c] >= 6 && dist[c] <= 14) near.push(c);
     }
-    const pool = far.length ? far : any;
+    const pool = near.length ? near : any;
     if (!pool.length) return;
     const cell = pool[Math.floor(this.opt.rng() * pool.length)];
     this.ingredient = { cell, id: RECIPES[this.recipe].parts[this.step] };
@@ -425,7 +425,7 @@ export class World {
     const r = RECIPES[this.recipe];
     const x = cx(it.cell) * TILE + 4, y = cy(it.cell) * TILE + 4;
     this.ingredient = null;
-    this.ingredientDelay = 90;
+    this.ingredientDelay = 30;
     this.score(100);
     this.burst(x, y, '#f8d838', 8);
     if (++this.step < r.parts.length) {
@@ -446,7 +446,7 @@ export class World {
     if (!this.pocket || this.power) return;
     const kind = this.pocket;
     this.pocket = null;
-    this.ingredientDelay = 60;
+    this.ingredientDelay = 30;
     this.startPower(kind);
     this.popup(RECIPES[kind].name, this.pac.x, this.pac.y, '#f8d838');
   }
