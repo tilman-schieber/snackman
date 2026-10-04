@@ -153,13 +153,13 @@ function lighting(w: World) {
   const r = Math.max(base, 30 - w.playTime * 0.5);
   const light = new Float32Array(w.grid.length);
   const p = w.pac;
-  const it = w.ingredient;
   for (let c = 0; c < light.length; c++) {
     const x = cx(c) * TILE + 4, y = cy(c) * TILE + 4;
     // Light reaches through the tunnels too.
     const dx = Math.min(Math.abs(x - p.x), BW - Math.abs(x - p.x));
     let v = r - Math.hypot(dx, y - p.y) / TILE;
-    if (it) v = Math.max(v, 1.8 - Math.hypot(cx(c) - cx(it.cell), cy(c) - cy(it.cell)));
+    // Ingredients glow.
+    for (const it of w.ingredients) v = Math.max(v, 1.8 - Math.hypot(cx(c) - cx(it.cell), cy(c) - cy(it.cell)));
     light[c] = v;
   }
   return light;
@@ -230,8 +230,7 @@ export function drawBoard(ctx: Ctx, w: World, frame: number, still = false) {
   if (still) return ctx.restore();
 
   if (w.fruit > 0 && (w.fruit > 120 || (frame >> 2) % 2)) drawSprite(ctx, SPRITES.cherry, BX + FRUIT_X - 4, BY + FRUIT_Y - 4, PALETTE);
-  const it = w.ingredient;
-  if (it) {
+  for (const it of w.ingredients) {
     const x = BX + cx(it.cell) * TILE, y = BY + cy(it.cell) * TILE - ((frame >> 4) % 2);
     drawSprite(ctx, SPRITES[it.id], x, y, PALETTE);
     // A glint, so it stands out from the dots.
@@ -356,7 +355,7 @@ function drawHud(ctx: Ctx, game: Game, w: World, frame: number) {
   } else if (w.opt.mode.recipes) {
     // The recipe: what's in the pan so far, and what it makes.
     const making = w.pocket ?? w.recipe;
-    RECIPES[making].parts.forEach((id, i) => drawSprite(ctx, SPRITES[id], 4 + i * 10, 13, w.pocket || i < w.step ? PALETTE : DIM));
+    RECIPES[making].parts.forEach((id, i) => drawSprite(ctx, SPRITES[id], 4 + i * 10, 13, w.pocket || w.got.has(id) ? PALETTE : DIM));
     drawText(ctx, '>', 35, 13, GREY);
     const ready = !!w.pocket;
     drawSprite(ctx, SPRITES[making], 43, 13, ready ? PALETTE : DIM);

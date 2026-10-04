@@ -4,7 +4,7 @@ An arcade maze game in the style of the early eighties, built in TypeScript with
 
 **Play:** https://gh.tschieber.de/snackman/
 
-Eat every dot, keep away from the four ghosts. In ARCADE there are no power pellets: ingredients turn up in the maze one at a time, and three of them make a snack that you keep until you need it.
+Eat every dot, keep away from the four ghosts. In ARCADE there are no power pellets: the three ingredients of a recipe lie around the maze, and together they make a snack that you keep until you need it.
 
 ## Modes
 

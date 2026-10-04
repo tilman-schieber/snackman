@@ -105,10 +105,11 @@ export class World {
   /** Everything holds still for a moment when a ghost is eaten. */
   freeze = 0;
 
-  /** The recipe being collected, and how many of its parts are in. */
+  /** The recipe being collected, and which of its parts are in. */
   recipe: SnackKind = 'burger';
-  step = 0;
-  ingredient: { cell: number; id: string } | null = null;
+  got = new Set<string>();
+  /** Its parts still lying in the maze; they all turn up together. */
+  ingredients: { cell: number; id: string }[] = [];
   private ingredientDelay = 60;
   /** A finished snack, eaten with SPACE. */
   pocket: SnackKind | null = null;
@@ -378,7 +379,8 @@ export class World {
         this.fruit = FRUIT_TIME;
       if (this.dotsLeft === 0) return this.haunt ? this.escaped() : this.cleared();
     }
-    if (this.ingredient && this.ingredient.cell === c) this.collect();
+    const it = this.ingredients.find((i) => i.cell === c);
+    if (it) this.collect(it);
     if (this.fruit > 0 && Math.abs(p.x - FRUIT_X) < 6 && Math.abs(p.y - FRUIT_Y) < 6) {
       this.fruit = 0;
       const pts = this.score(FRUIT_POINTS[Math.min(FRUIT_POINTS.length - 1, this.opt.level - 1)]);
@@ -403,33 +405,35 @@ export class World {
   // ---------- snacks ----------
 
   private stepRecipe() {
-    if (!this.opt.mode.recipes || this.ingredient || this.pocket) return;
+    if (!this.opt.mode.recipes || this.ingredients.length || this.pocket) return;
     if (--this.ingredientDelay > 0) return;
-    // A short walk away from Snackman: not under his nose, not across the maze.
+    // The whole recipe at once, spread around the maze a short walk from Snackman.
     const dist = this.distances([this.tileOf(this.pac)]);
     const near: number[] = [];
     const any: number[] = [];
     for (let c = 0; c < dist.length; c++) {
       if (dist[c] < 4 || cx(c) === 0 || cx(c) === COLS - 1) continue;
       any.push(c);
-      if (dist[c] >= 6 && dist[c] <= 14) near.push(c);
+      if (dist[c] >= 6 && dist[c] <= 16) near.push(c);
     }
-    const pool = near.length ? near : any;
-    if (!pool.length) return;
-    const cell = pool[Math.floor(this.opt.rng() * pool.length)];
-    this.ingredient = { cell, id: RECIPES[this.recipe].parts[this.step] };
+    const apart = (c: number) => this.ingredients.every((it) => Math.abs(cx(it.cell) - cx(c)) + Math.abs(cy(it.cell) - cy(c)) >= 6);
+    for (const id of RECIPES[this.recipe].parts) {
+      if (this.got.has(id)) continue;
+      const pool = [near.filter(apart), near, any.filter(apart), any].find((p) => p.length);
+      if (!pool) return;
+      this.ingredients.push({ cell: pool[Math.floor(this.opt.rng() * pool.length)], id });
+    }
   }
 
-  private collect() {
-    const it = this.ingredient!;
+  private collect(it: { cell: number; id: string }) {
     const r = RECIPES[this.recipe];
     const x = cx(it.cell) * TILE + 4, y = cy(it.cell) * TILE + 4;
-    this.ingredient = null;
-    this.ingredientDelay = 30;
+    this.ingredients = this.ingredients.filter((i) => i !== it);
+    this.got.add(it.id);
     this.score(100);
     this.burst(x, y, '#f8d838', 8);
-    if (++this.step < r.parts.length) {
-      sfx.ingredient(this.step - 1);
+    if (this.got.size < r.parts.length) {
+      sfx.ingredient(this.got.size - 1);
       this.popup(it.id.toUpperCase(), x, y, '#fcfcfc');
       return;
     }
@@ -437,7 +441,9 @@ export class World {
     this.pocket = this.recipe;
     this.popup(`${r.name}!`, x, y, '#f8d838');
     sfx.snackReady();
-    this.step = 0;
+    this.got.clear();
+    this.ingredients = [];
+    this.ingredientDelay = 30;
     const roll = this.opt.rng();
     this.recipe = roll < 0.5 ? 'burger' : roll < 0.75 ? 'icecream' : 'coffee';
   }
