@@ -1,5 +1,5 @@
 // One maze in play: Snackman, the ghosts, the dots and whatever is cooking.
-import { Rng } from './rng';
+import { Rng } from 'arcade-kit/rng';
 import { COLS, ROWS, TILE, FLOOR, PELLET, Layout, cellAt, cx, cy, DOOR_X, DOOR_Y, HOUSE_Y, DOOR_TILES, START_X, START_Y, FRUIT_X, FRUIT_Y } from './maze';
 import type { Mode } from './modes';
 import type { Theme } from './levels';

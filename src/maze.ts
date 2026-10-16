@@ -1,6 +1,6 @@
 // Mazes: corridors one tile wide on a 3-tile lattice, mirrored left to right, with no dead ends,
 // a ghost house in the middle and tunnels that wrap around the sides.
-import { Rng } from './rng';
+import { Rng } from 'arcade-kit/rng';
 
 export const COLS = 30;
 export const ROWS = 24;

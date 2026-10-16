@@ -1,5 +1,5 @@
 // What each level looks like: its maze and its colours.
-import { Rng } from './rng';
+import { Rng } from 'arcade-kit/rng';
 import { Layout, generate, parse } from './maze';
 import type { Mode } from './modes';
 

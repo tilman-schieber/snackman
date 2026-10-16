@@ -1,7 +1,7 @@
 import { MODES, Mode, SPEEDS, SPEED_POINTS } from './modes';
 import { loadTables, saveTables, rankFor, ScoreEntry, Tables, MAX_SCORES, load, save, fetchGlobal, submitGlobal, flushPending } from './scores';
 import { sfx, music, TUNE } from './audio';
-import { hashString, makeRng, randomSeed, today } from './rng';
+import { hashString, makeRng, randomSeed, today } from 'arcade-kit/rng';
 import { levelLayout, themeFor } from './levels';
 import { World, Dir } from './world';
 import { HELP_PAGES } from './help';
